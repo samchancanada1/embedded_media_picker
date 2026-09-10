@@ -6,10 +6,16 @@ void main() {
 }
 
 class ExampleApp extends StatelessWidget {
-  const ExampleApp({super.key, this.platform, this.fontFamily});
+  const ExampleApp({
+    super.key,
+    this.platform,
+    this.fontFamily,
+    this.initialSelectedItems = const <PickedMedia>[],
+  });
 
   final TargetPlatform? platform;
   final String? fontFamily;
+  final List<PickedMedia> initialSelectedItems;
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +25,18 @@ class ExampleApp extends StatelessWidget {
         platform: platform,
         fontFamily: fontFamily,
       ),
-      home: const PickerExampleScreen(),
+      home: PickerExampleScreen(initialSelectedItems: initialSelectedItems),
     );
   }
 }
 
 class PickerExampleScreen extends StatefulWidget {
-  const PickerExampleScreen({super.key});
+  const PickerExampleScreen({
+    super.key,
+    this.initialSelectedItems = const <PickedMedia>[],
+  });
+
+  final List<PickedMedia> initialSelectedItems;
 
   @override
   State<PickerExampleScreen> createState() => _PickerExampleScreenState();
@@ -41,7 +52,7 @@ class _PickerExampleScreenState extends State<PickerExampleScreen> {
   final _picker = const EmbeddedMediaPicker();
   final _controller = EmbeddedMediaPickerController();
   var _embeddedAvailable = false;
-  var _selectedItems = <PickedMedia>[];
+  late var _selectedItems = widget.initialSelectedItems;
   String? _error;
 
   @override
