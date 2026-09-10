@@ -1,9 +1,9 @@
 name: embedded_media_picker
 description: A Flutter plugin for Android's embedded photo picker with cross-platform media picker fallback.
 version: 0.0.1
-homepage: https://github.com/hiutungchan/embedded_media_picker
-repository: https://github.com/hiutungchan/embedded_media_picker
-issue_tracker: https://github.com/hiutungchan/embedded_media_picker/issues
+homepage: https://github.com/samchancanada1/embedded_media_picker
+repository: https://github.com/samchancanada1/embedded_media_picker
+issue_tracker: https://github.com/samchancanada1/embedded_media_picker/issues
 topics:
   - photo-picker
   - media-picker
