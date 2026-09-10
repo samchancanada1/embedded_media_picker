@@ -14,17 +14,26 @@ Android embedded picker support uses
 `androidx.photopicker:photopicker:1.0.0-alpha02`. Treat the embedded Android
 surface as early-stage until AndroidX publishes a stable artifact.
 
-## Native Picker UI
+## Feature Highlights
 
 | Android | iOS |
 | --- | --- |
-| ![Android native picker](example/screenshots/android.png) | ![iOS native picker](example/screenshots/ios.png) |
+| ![Android embedded picker highlight](example/screenshots/android.png) | ![iOS privacy picker highlight](example/screenshots/ios.png) |
 
-The example also includes generated selected-result screenshots at
+Android shows the newer embedded picker surface: the picker can live inside the
+app UI while selected URI grants and revocations stream back in real time. iOS
+shows the privacy-focused picker flow, where the app receives only the selected
+items instead of broad photo library access.
+
+Raw native captures are kept at `example/screenshots/native-android.png` and
+`example/screenshots/native-ios.png`. Selected-result screenshots are kept at
 `example/screenshots/selected-android.png` and
-`example/screenshots/selected-ios.png`. Regenerate those images with
-`flutter test tool/render_screenshots_test.dart --update-goldens` from the
-`example` directory.
+`example/screenshots/selected-ios.png`.
+
+Regenerate feature screenshots with
+`flutter test tool/render_feature_screenshots_test.dart --update-goldens` from
+the `example` directory. Regenerate selected-result screenshots with
+`flutter test tool/render_screenshots_test.dart --update-goldens`.
 
 ## Pick media
 
