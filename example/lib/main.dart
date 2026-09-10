@@ -6,13 +6,18 @@ void main() {
 }
 
 class ExampleApp extends StatelessWidget {
-  const ExampleApp({super.key});
+  const ExampleApp({super.key, this.platform, this.fontFamily});
+
+  final TargetPlatform? platform;
+  final String? fontFamily;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff6750a4)),
+        platform: platform,
+        fontFamily: fontFamily,
       ),
       home: const PickerExampleScreen(),
     );
