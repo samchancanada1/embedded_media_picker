@@ -1,3 +1,7 @@
+/// A Flutter plugin for Android embedded media picking with iOS and Android
+/// modal picker fallbacks.
+library;
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -6,11 +10,18 @@ import 'package:flutter/widgets.dart';
 
 import 'embedded_media_picker_platform_interface.dart';
 
+/// The type of media the picker should show.
 enum EmbeddedMediaType {
+  /// Show images only.
   image,
+
+  /// Show videos only.
   video,
+
+  /// Show both images and videos.
   imageAndVideo;
 
+  /// The value sent to the platform implementation.
   String get platformValue => switch (this) {
     EmbeddedMediaType.image => 'image',
     EmbeddedMediaType.video => 'video',
@@ -18,11 +29,18 @@ enum EmbeddedMediaType {
   };
 }
 
+/// The detected type of a picked media item.
 enum PickedMediaType {
+  /// The item is an image.
   image,
+
+  /// The item is a video.
   video,
+
+  /// The platform did not report a known media type.
   unknown;
 
+  /// Parses a platform value into a [PickedMediaType].
   static PickedMediaType fromPlatformValue(Object? value) {
     return switch (value) {
       'image' => PickedMediaType.image,
@@ -32,11 +50,18 @@ enum PickedMediaType {
   }
 }
 
+/// The preferred tab to show when a platform picker supports an initial tab.
 enum EmbeddedMediaPickerLaunchTab {
+  /// Let the platform choose its default starting tab.
   systemDefault,
+
+  /// Start on the photos tab when supported.
   photos,
+
+  /// Start on the albums tab when supported.
   albums;
 
+  /// The value sent to the platform implementation.
   String get platformValue => switch (this) {
     EmbeddedMediaPickerLaunchTab.systemDefault => 'systemDefault',
     EmbeddedMediaPickerLaunchTab.photos => 'photos',
@@ -44,11 +69,18 @@ enum EmbeddedMediaPickerLaunchTab {
   };
 }
 
+/// The preferred visual theme for platform picker surfaces that support it.
 enum EmbeddedMediaPickerTheme {
+  /// Match the system theme.
   system,
+
+  /// Prefer a light picker theme when supported.
   light,
+
+  /// Prefer a dark picker theme when supported.
   dark;
 
+  /// The value sent to the platform implementation.
   String get platformValue => switch (this) {
     EmbeddedMediaPickerTheme.system => 'system',
     EmbeddedMediaPickerTheme.light => 'light',
@@ -56,8 +88,10 @@ enum EmbeddedMediaPickerTheme {
   };
 }
 
+/// A media item returned by the platform picker.
 @immutable
 class PickedMedia {
+  /// Creates a picked media description.
   const PickedMedia({
     required this.uri,
     this.type = PickedMediaType.unknown,
@@ -67,6 +101,7 @@ class PickedMedia {
     this.isTemporary = false,
   });
 
+  /// Creates a [PickedMedia] from the platform channel payload.
   factory PickedMedia.fromMap(Map<Object?, Object?> map) {
     return PickedMedia(
       uri: Uri.parse(map['uri'] as String),
@@ -82,10 +117,19 @@ class PickedMedia {
     );
   }
 
+  /// The platform URI for the selected media item.
   final Uri uri;
+
+  /// The detected media type.
   final PickedMediaType type;
+
+  /// The MIME type reported by the platform, if known.
   final String? mimeType;
+
+  /// The display file name reported by the platform, if known.
   final String? fileName;
+
+  /// The file size in bytes, if the platform can query it.
   final int? sizeBytes;
 
   /// True when the URI points to a copied temporary app file.
@@ -94,6 +138,7 @@ class PickedMedia {
   /// not grant stable asset URLs to third-party apps.
   final bool isTemporary;
 
+  /// Converts this item to a platform-channel friendly map.
   Map<String, Object?> toMap() {
     return <String, Object?>{
       'uri': uri.toString(),
@@ -127,8 +172,10 @@ class PickedMedia {
   }
 }
 
+/// Options used when opening the modal picker or embedded picker view.
 @immutable
 class EmbeddedMediaPickerOptions {
+  /// Creates picker options.
   const EmbeddedMediaPickerOptions({
     this.mediaType = EmbeddedMediaType.imageAndVideo,
     this.maxSelectionLimit = 1,
@@ -141,6 +188,7 @@ class EmbeddedMediaPickerOptions {
     this.persistablePermissions = false,
   });
 
+  /// Which media types should be shown.
   final EmbeddedMediaType mediaType;
 
   /// The maximum selected item count.
@@ -148,19 +196,30 @@ class EmbeddedMediaPickerOptions {
   /// Android and iOS may cap this to their current system picker limit.
   /// On iOS, `0` means unlimited selection.
   final int maxSelectionLimit;
+
+  /// Optional MIME type filters sent to platforms that support them.
   final List<String> mimeTypes;
+
+  /// Optional media URIs that should start selected when supported.
   final List<Uri> preselectedUris;
+
+  /// Whether the platform should show and preserve selection order.
   final bool orderedSelection;
+
+  /// ARGB accent color for picker UI surfaces that support tinting.
   final int? accentColorArgb;
 
   /// Reserved for AndroidX versions that expose picker start-tab selection.
   final EmbeddedMediaPickerLaunchTab launchTab;
+
+  /// Preferred picker theme for platforms that support theme selection.
   final EmbeddedMediaPickerTheme theme;
 
   /// Requests persisted read access for Android fallback results when the
   /// platform returns persistable document URIs.
   final bool persistablePermissions;
 
+  /// Converts the options to a platform-channel friendly map.
   Map<String, Object?> toMap() {
     return <String, Object?>{
       'mediaType': mediaType.platformValue,
@@ -176,11 +235,15 @@ class EmbeddedMediaPickerOptions {
   }
 }
 
+/// Callback used when a picker reports a list of selected or permissioned items.
 typedef EmbeddedMediaPickerItemsCallback =
     void Function(List<PickedMedia> items);
+
+/// Callback used when a picker reports a platform error.
 typedef EmbeddedMediaPickerErrorCallback =
     void Function(String code, String message);
 
+/// Controller for observing state from an [EmbeddedMediaPickerView].
 class EmbeddedMediaPickerController extends ChangeNotifier {
   final StreamController<List<PickedMedia>> _selectionChanges =
       StreamController<List<PickedMedia>>.broadcast(sync: true);
@@ -194,15 +257,26 @@ class EmbeddedMediaPickerController extends ChangeNotifier {
   List<PickedMedia> _selectedItems = const <PickedMedia>[];
   bool _isSessionOpen = false;
 
+  /// The current selected items known by the embedded picker controller.
   List<PickedMedia> get selectedItems => _selectedItems;
+
+  /// Whether an embedded picker session has opened.
   bool get isSessionOpen => _isSessionOpen;
 
+  /// Emits whenever the embedded picker selection changes.
   Stream<List<PickedMedia>> get selectionChanges => _selectionChanges.stream;
+
+  /// Emits when the embedded picker grants URI access.
   Stream<List<PickedMedia>> get permissionGrants => _permissionGrants.stream;
+
+  /// Emits when the embedded picker revokes URI access.
   Stream<List<PickedMedia>> get permissionRevocations =>
       _permissionRevocations.stream;
+
+  /// Emits platform errors reported by the embedded picker.
   Stream<(String, String)> get errors => _errors.stream;
 
+  /// Clears the controller's current selected item state.
   void clearSelection() {
     _setSelectedItems(const <PickedMedia>[]);
   }
@@ -251,13 +325,20 @@ class EmbeddedMediaPickerController extends ChangeNotifier {
   }
 }
 
+/// Entry point for opening modal platform media pickers.
 class EmbeddedMediaPicker {
+  /// Creates an embedded media picker API wrapper.
   const EmbeddedMediaPicker();
 
+  /// Returns true when the Android embedded picker view is available.
+  ///
+  /// iOS currently returns false because only modal `PHPickerViewController`
+  /// fallback is supported there.
   Future<bool> isEmbeddedPickerAvailable() {
     return EmbeddedMediaPickerPlatform.instance.isEmbeddedPickerAvailable();
   }
 
+  /// Opens the platform modal media picker and returns selected items.
   Future<List<PickedMedia>> pickMedia({
     EmbeddedMediaPickerOptions options = const EmbeddedMediaPickerOptions(),
   }) {
@@ -265,7 +346,13 @@ class EmbeddedMediaPicker {
   }
 }
 
+/// A Flutter widget that hosts Android's embedded photo picker view.
+///
+/// This widget is only available on Android versions that support
+/// `EmbeddedPhotoPickerView`. Use [EmbeddedMediaPicker.isEmbeddedPickerAvailable]
+/// before showing it in production UI.
 class EmbeddedMediaPickerView extends StatefulWidget {
+  /// Creates an Android embedded picker view.
   const EmbeddedMediaPickerView({
     super.key,
     this.options = const EmbeddedMediaPickerOptions(),
@@ -278,13 +365,28 @@ class EmbeddedMediaPickerView extends StatefulWidget {
     this.onError,
   });
 
+  /// Options passed to the embedded picker view.
   final EmbeddedMediaPickerOptions options;
+
+  /// Optional controller that receives embedded picker state changes.
   final EmbeddedMediaPickerController? controller;
+
+  /// Called when the selected media list changes.
   final EmbeddedMediaPickerItemsCallback? onSelectionChanged;
+
+  /// Called when the user completes the embedded picker session.
   final VoidCallback? onSelectionComplete;
+
+  /// Called when the platform grants URI access for selected items.
   final EmbeddedMediaPickerItemsCallback? onUriPermissionGranted;
+
+  /// Called when the platform revokes URI access for deselected items.
   final EmbeddedMediaPickerItemsCallback? onUriPermissionRevoked;
+
+  /// Called when the embedded picker session opens successfully.
   final VoidCallback? onSessionOpened;
+
+  /// Called when the embedded picker reports an error.
   final EmbeddedMediaPickerErrorCallback? onError;
 
   @override
