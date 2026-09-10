@@ -25,15 +25,9 @@ app UI while selected URI grants and revocations stream back in real time. iOS
 shows the privacy-focused picker flow, where the app receives only the selected
 items instead of broad photo library access.
 
-Raw native captures are kept at `example/screenshots/native-android.png` and
-`example/screenshots/native-ios.png`. Selected-result screenshots are kept at
-`example/screenshots/selected-android.png` and
-`example/screenshots/selected-ios.png`.
-
 Regenerate feature screenshots with
 `flutter test tool/render_feature_screenshots_test.dart --update-goldens` from
-the `example` directory. Regenerate selected-result screenshots with
-`flutter test tool/render_screenshots_test.dart --update-goldens`.
+the `example` directory.
 
 ## Pick media
 
