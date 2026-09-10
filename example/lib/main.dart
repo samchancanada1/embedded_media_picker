@@ -43,6 +43,7 @@ class PickerExampleScreen extends StatefulWidget {
 }
 
 class _PickerExampleScreenState extends State<PickerExampleScreen> {
+  static const _autoOpenPicker = bool.fromEnvironment('AUTO_OPEN_PICKER');
   static const options = EmbeddedMediaPickerOptions(
     maxSelectionLimit: 5,
     orderedSelection: true,
@@ -58,7 +59,17 @@ class _PickerExampleScreenState extends State<PickerExampleScreen> {
   @override
   void initState() {
     super.initState();
-    _loadAvailability();
+    if (!_autoOpenPicker) {
+      _loadAvailability();
+    }
+    if (_autoOpenPicker) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future<void>.delayed(
+          const Duration(milliseconds: 700),
+          _pickWithFallback,
+        );
+      });
+    }
   }
 
   Future<void> _loadAvailability() async {
@@ -123,7 +134,7 @@ class _PickerExampleScreenState extends State<PickerExampleScreen> {
                 ),
               ),
             Expanded(
-              child: _embeddedAvailable
+              child: _embeddedAvailable && !_autoOpenPicker
                   ? EmbeddedMediaPickerView(
                       options: options,
                       controller: _controller,

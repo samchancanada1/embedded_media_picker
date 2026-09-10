@@ -72,7 +72,7 @@ void main() {
 
     await expectLater(
       find.byType(ExampleApp),
-      matchesGoldenFile('../screenshots/android.png'),
+      matchesGoldenFile('../screenshots/selected-android.png'),
     );
   });
 
@@ -91,7 +91,7 @@ void main() {
 
     await expectLater(
       find.byType(ExampleApp),
-      matchesGoldenFile('../screenshots/ios.png'),
+      matchesGoldenFile('../screenshots/selected-ios.png'),
     );
   });
 }

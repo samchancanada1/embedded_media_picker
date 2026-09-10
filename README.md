@@ -14,13 +14,15 @@ Android embedded picker support uses
 `androidx.photopicker:photopicker:1.0.0-alpha02`. Treat the embedded Android
 surface as early-stage until AndroidX publishes a stable artifact.
 
-## Screenshots
+## Native Picker UI
 
 | Android | iOS |
 | --- | --- |
-| ![Android example](example/screenshots/android.png) | ![iOS example](example/screenshots/ios.png) |
+| ![Android native picker](example/screenshots/android.png) | ![iOS native picker](example/screenshots/ios.png) |
 
-Regenerate these images with
+The example also includes generated selected-result screenshots at
+`example/screenshots/selected-android.png` and
+`example/screenshots/selected-ios.png`. Regenerate those images with
 `flutter test tool/render_screenshots_test.dart --update-goldens` from the
 `example` directory.
 
